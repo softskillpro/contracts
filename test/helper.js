@@ -16,6 +16,7 @@ const setupContracts = async() => {
     const WrapperSushi = await ethers.getContractFactory('WrapAndUnWrapSushi');
     const TokenRewards = await ethers.getContractFactory('TokenRewards');
     const PlexusOracle = await ethers.getContractFactory('PlexusOracle');
+    const PriceOracleUni = await ethers.getContractFactory('PriceOracleUni');
     const Tier1Staking = await ethers.getContractFactory('Tier1FarmController');
     const Core = await ethers.getContractFactory('Core');
     const OwnableProxy = await ethers.getContractFactory('OwnableProxy');
@@ -23,7 +24,7 @@ const setupContracts = async() => {
     const Tier2Aave = await ethers.getContractFactory('Tier2AaveFarmController');
     const Tier2Pickle = await ethers.getContractFactory('Tier2PickleFarmController');
     const LP2LP = await ethers.getContractFactory('LP2LP');
-	const Tier2Aggregator = await ethers.getContractFactory('Tier2AggregatorFarmController');
+	  const Tier2Aggregator = await ethers.getContractFactory('Tier2AggregatorFarmController');
     const Airdrop = await ethers.getContractFactory('Airdrop');
 
     // plexus reward token
@@ -38,18 +39,18 @@ const setupContracts = async() => {
         Wrapper,
         OwnableProxy,
         'WrapAndUnWrap',
-		addr.tokens.WETH[network],
-		addr.swaps.uniswapRouter[network],
-		addr.swaps.uniswapFactory[network]
+        addr.tokens.WETH[network],
+        addr.swaps.uniswapRouter[network],
+        addr.swaps.uniswapFactory[network]
     );
 
     const wrapperSushi = await deployWithProxy(
         WrapperSushi,
         OwnableProxy,
         'WrapAndUnWrapSushi',
-		addr.tokens.WETH[network],
-		addr.swaps.sushiswapRouter[network],
-		addr.swaps.sushiswapFactory[network]
+        addr.tokens.WETH[network],
+        addr.swaps.sushiswapRouter[network],
+        addr.swaps.sushiswapFactory[network]
     );
 
     const tokenRewards = await deployWithProxy(
@@ -62,64 +63,72 @@ const setupContracts = async() => {
         PlexusOracle,
         OwnableProxy,
         'PlexusOracle',
-		addr.swaps.uniswapRouter[network],
-		addr.tokens.USDC[network]
+        addr.swaps.uniswapRouter[network],
+        addr.tokens.USDC[network]
+    );
+
+    const priceOracleUni = await deployWithProxy(
+        PriceOracleUni,
+        OwnableProxy,
+        'PriceOracleUni',
+        addr.swaps.uniswapFactory[network],
+        addr.tokens.WETH[network]
     );
 
     const tier2Farm = await deployWithProxy(
         Tier2Farm,
         OwnableProxy,
         'Tier2FarmController',
-		addr.AutoStake[network],
-		addr.tokens.FARM[network]
+        addr.AutoStake[network],
+        addr.tokens.FARM[network]
     );
 
     const tier1Staking = await deployWithProxy(
         Tier1Staking,
         OwnableProxy,
         'Tier1FarmController',
-		tier2Farm.address,
-		plexusOracle.address
+        tier2Farm.address,
+        plexusOracle.address
     );
 
     const core = await deployWithProxy(
         Core,
         OwnableProxy,
         'Core',
-		addr.tokens.WETH[network],
-		wrapper.address
+        addr.tokens.WETH[network],
+        wrapper.address
     );
 
     const tier2Aave = await deployWithProxy(
         Tier2Aave,
         OwnableProxy,
         'Tier2AaveFarmController',
-		addr.AaveLendingPoolV2[network],
-		addr.tokens.DAI[network],
-		addr.tokens.aDAI[network]
+        addr.AaveLendingPoolV2[network],
+        addr.tokens.DAI[network],
+        addr.tokens.aDAI[network]
     );
 
     const tier2Pickle = await deployWithProxy(
         Tier2Pickle,
         OwnableProxy,
         'Tier2PickleFarmController',
-		addr.StakingRewards[network],
-		addr.tokens.PICKLE[network]
+        addr.StakingRewards[network],
+        addr.tokens.PICKLE[network]
     );
 
     const lp2lp = await deployWithProxy(
         LP2LP,
         OwnableProxy,
         'LP2LP',
-		addr.tokens.vBNT[network]
+		    addr.tokens.vBNT[network]
     );
 
     const tier2Aggregator = await deployWithProxy(
         Tier2Aggregator,
         OwnableProxy,
         'Tier2AggregatorFarmController',
-		addr.tokens.pUNI_V2[network],
-		addr.tokens.UNI_V2[network]
+        addr.tokens.pUNI_V2[network],
+        addr.tokens.UNI_V2[network]
     );
 
     // plexus reward token
@@ -130,8 +139,8 @@ const setupContracts = async() => {
         Airdrop,
         OwnableProxy,
         'Airdrop',
-		plexusCoin.address,
-		[addr1.address, addrs[0].address]
+        plexusCoin.address,
+        [addr1.address, addrs[0].address]
     );
 
     // then setup the contracts
@@ -161,6 +170,7 @@ const setupContracts = async() => {
         wrapperSushi,
         tokenRewards,
         plexusOracle,
+        priceOracleUni,
         tier1Staking,
         core,
         tier2Farm,

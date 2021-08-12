@@ -17,7 +17,6 @@
     "verify:all": "npx hardhat run scripts/verifyAll.js",
     "verify:wrappers": "npx hardhat run scripts/verifyWrappers.js",
     "generate-docs": "node node_modules/solidity-docgen/dist/cli.js --solc-module=solc"
-   
   },
   "repository": {
     "type": "git",
@@ -33,6 +32,8 @@
   },
   "homepage": "https://github.com/plexus-money/contracts#README",
   "dependencies": {
+    "@keydonix/uniswap-oracle-sdk": "^1.0.6",
+    "@keydonix/uniswap-oracle-sdk-adapter": "^1.0.6",
     "@openzeppelin/contracts": "^4.1.0"
   },
   "devDependencies": {
