@@ -173,14 +173,14 @@ contract WrapAndUnWrap is IWrapper {
         address destinationToken,
         address[] memory path,
         uint256 amount,
-        uint256 userSlippageTolerance,
+        uint256 userSlippageToleranceAmount,
         uint256 deadline
     ) private returns (uint256) {
         if (sourceToken != address(0x0)) {
             IERC20(sourceToken).safeTransferFrom(msg.sender, address(this), amount);
         }
 
-        conductUniswap(sourceToken, destinationToken, path, amount, userSlippageTolerance, deadline);
+        conductUniswap(sourceToken, destinationToken, path, amount, userSlippageToleranceAmount, deadline);
         uint256 thisBalance = IERC20(destinationToken).balanceOf(address(this));
         IERC20(destinationToken).safeTransfer(msg.sender, thisBalance);
         return thisBalance;
@@ -215,7 +215,7 @@ contract WrapAndUnWrap is IWrapper {
                 params.destinationTokens[0],
                 params.path1,
                 amount.div(2),
-                params.userSlippageTolerance,
+                params.userSlippageToleranceAmounts[0],
                 params.deadline
             );
         }
@@ -225,7 +225,7 @@ contract WrapAndUnWrap is IWrapper {
                 params.destinationTokens[1],
                 params.path2,
                 amount.div(2),
-                params.userSlippageTolerance,
+                params.userSlippageToleranceAmounts[1],
                 params.deadline
             );
         }
@@ -307,7 +307,7 @@ contract WrapAndUnWrap is IWrapper {
     {
         //address[][] memory _paths = splitPath(params.paths, params.destinationTokens[0]);
         if (params.destinationTokens.length == 1) {
-            uint256 swapAmount = swap(params.sourceToken, params.destinationTokens[0], params.path1, params.amount, params.userSlippageTolerance, params.deadline);
+            uint256 swapAmount = swap(params.sourceToken, params.destinationTokens[0], params.path1, params.amount, params.userSlippageToleranceAmounts[0], params.deadline);
             return (params.destinationTokens[0], swapAmount);
         } else {
             bool remixing = false;
@@ -362,7 +362,7 @@ contract WrapAndUnWrap is IWrapper {
                 params.destinationToken,
                 params.path1,
                 pTokenBalance,
-                params.userSlippageTolerance,
+                params.userSlippageToleranceAmounts[0],
                 params.deadline
             );
         }
@@ -373,7 +373,7 @@ contract WrapAndUnWrap is IWrapper {
                 params.destinationToken,
                 params.path2,
                 pTokenBalance2,
-                params.userSlippageTolerance,
+                params.userSlippageToleranceAmounts[1],
                 params.deadline
             );
         }
@@ -423,7 +423,7 @@ contract WrapAndUnWrap is IWrapper {
         // destinationToken Address of the destination token contract
         // paths Paths for uniswap
         // amount Amount of source token to be unwrapped
-        // userSlippageTolerance Maximum permissible user slippage tolerance
+        // userSlippageToleranceAmounts Maximum permissible user slippage tolerance
      * @return Amount of the destination token returned from unwrapping the
      * source token
      */
@@ -454,7 +454,7 @@ contract WrapAndUnWrap is IWrapper {
         // unwrapPaths Paths best uniswap trade paths for doing the unwrapping
         // wrapPaths Paths best uniswap trade paths for doing the wrapping to the new LP token
         // amount Amount of LP Token to be remixed
-        // userSlippageTolerance Maximum permissible user slippage tolerance
+        // userSlippageToleranceAmounts Maximum permissible user slippage tolerance
         // deadline Timeout after which the txn should revert
         // crossDexRemix Indicates whether this is a cross-dex remix or not
      * @return Amount of the destination token returned from unwrapping the
@@ -478,7 +478,7 @@ contract WrapAndUnWrap is IWrapper {
             path1: params.unwrapPath1,
             path2: params.unwrapPath2,
             amount: params.amount,
-            userSlippageTolerance: params.userSlippageTolerance,
+            userSlippageToleranceAmounts: params.userSlippageToleranceAmounts,
             deadline: params.deadline
         });
 
@@ -490,7 +490,7 @@ contract WrapAndUnWrap is IWrapper {
             path1: params.wrapPath1,
             path2: params.wrapPath2,
             amount: params.amount,
-            userSlippageTolerance: params.userSlippageTolerance,
+            userSlippageToleranceAmounts: params.userSlippageToleranceAmounts,
             deadline: params.deadline
         });
         if(params.crossDexRemix) {
@@ -618,7 +618,7 @@ contract WrapAndUnWrap is IWrapper {
      * @param buyToken Address to the token being bought as part of the swap
      * @param path Path for uniswap
      * @param amount Transaction amount denoted in terms of the token sold
-     * @param userSlippageTolerance Maximum permissible slippage limit
+     * @param userSlippageToleranceAmount Maximum permissible slippage limit
      * @return amounts1 Tokens received once the swap is completed
      */
     function conductUniswap(
@@ -626,7 +626,7 @@ contract WrapAndUnWrap is IWrapper {
         address buyToken,
         address[] memory path,
         uint256 amount,
-        uint256 userSlippageTolerance,
+        uint256 userSlippageToleranceAmount,
         uint256 deadline
     )
         internal
@@ -640,9 +640,8 @@ contract WrapAndUnWrap is IWrapper {
         if (sellToken == address(0x0)) {
             // addresses[0] = WETH_TOKEN_ADDRESS;
             // addresses[1] = buyToken;
-            uint256 amountOutMin = getAmountOutMin(path, amount, userSlippageTolerance);
             uniswapExchange.swapExactETHForTokens{value: msg.value}(
-                amountOutMin,
+                userSlippageToleranceAmount,
                 path,
                 address(this),
                 deadline
@@ -656,7 +655,7 @@ contract WrapAndUnWrap is IWrapper {
             uint256[] memory amounts = conductUniswapT4T(
                 path,
                 amount,
-                userSlippageTolerance,
+                userSlippageToleranceAmount,
                 deadline
             );
             uint256 resultingTokens = amounts[amounts.length - 1];
@@ -671,24 +670,23 @@ contract WrapAndUnWrap is IWrapper {
      * first address is the input token and the last address is the output
      * token
      * @param amount Amount of input tokens to be swapped
-     * @param userSlippageTolerance Maximum permissible slippage tolerance
+     * @param userSlippageToleranceAmount Maximum permissible slippage tolerance
      * @return amounts_ The input token amount and all subsequent output token
      * amounts
      */
     function conductUniswapT4T(
         address[] memory paths,
         uint256 amount,
-        uint256 userSlippageTolerance,
+        uint256 userSlippageToleranceAmount,
         uint256 deadline
     )
         internal
         returns (uint256[] memory amounts_)
     {
-        uint256 amountOutMin = getAmountOutMin(paths, amount, userSlippageTolerance);
         uint256[] memory amounts =
             uniswapExchange.swapExactTokensForTokens(
                 amount,
-                amountOutMin,
+                userSlippageToleranceAmount,
                 paths,
                 address(this),
                 deadline
