@@ -619,17 +619,12 @@ contract WrapAndUnWrapSushi is IWrapper{
             theAddresses,
             amount
         );
-        require(
-            userSlippageTolerance <= 100,
-            "userSlippageTolerance can not be larger than 100"
-        );
-
           // this is the index of the output token we're swapping to based on the paths
         uint outputTokenIndex = assetAmounts.length - 1;
         return
             SafeMath.div(
-                SafeMath.mul(assetAmounts[outputTokenIndex], (100 - userSlippageTolerance)),
-                100
+                SafeMath.mul(assetAmounts[outputTokenIndex], (100 * 10000 - userSlippageTolerance)),
+                100 * 10000
             );
     }
 

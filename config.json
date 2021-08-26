@@ -1,5 +1,6 @@
 {
-	"userSlippageTolerance": 1,
+	"userSlippageTolerance": 0.5,
+	"tolerancePrecision": 10000,
 	"addresses": {
 		"tokens": {
 			"USDT": {

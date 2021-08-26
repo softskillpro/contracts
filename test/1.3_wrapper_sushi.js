@@ -49,7 +49,7 @@ describe('Deploying the plexus contracts for WrapperSushi Token Swap test', () =
      it('Should convert 2 ETH to Farm token from harvest.finance via SushiSwap', async () => {
 
         const zeroAddress = process.env.ZERO_ADDRESS;
-        const userSlippageTolerance = config.userSlippageTolerance;
+        const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
         const erc20 = new ethers.Contract(farmTokenAddress, abi, provider);
 
         // Please note, the number of farm tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -89,7 +89,7 @@ describe('Deploying the plexus contracts for WrapperSushi Token Swap test', () =
       it('Should convert 2 ETH to DAI Token(s) from MakerDao via SushiSwap', async () => {
 
         const zeroAddress = process.env.ZERO_ADDRESS;
-        const userSlippageTolerance = config.userSlippageTolerance;
+        const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
         const erc20 = new ethers.Contract(daiTokenAddress, abi, provider);
 
         // Please note, the number of dai tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -129,7 +129,7 @@ describe('Deploying the plexus contracts for WrapperSushi Token Swap test', () =
       it('Should convert 2 ETH to Pickle Token(s) via SushiSwap', async () => {
 
         const zeroAddress = process.env.ZERO_ADDRESS;
-        const userSlippageTolerance = config.userSlippageTolerance;
+        const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
         const erc20 = new ethers.Contract(pickleTokenAddress, abi, provider);
 
         // Please note, the number of pickle tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -169,7 +169,7 @@ describe('Deploying the plexus contracts for WrapperSushi Token Swap test', () =
     it('Should revert via Sushi after the deadline has passed', async () => {
 
       const zeroAddress = process.env.ZERO_ADDRESS;
-      const userSlippageTolerance = config.userSlippageTolerance;
+      const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
 
       // Please note, the number of pickle tokens we want to get doesn't matter, so the unit amount is just a placeholder
       const amountPlaceholder = ethers.utils.parseEther(unitAmount)

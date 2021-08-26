@@ -45,7 +45,7 @@ describe('Deploying the plexus contracts for WrapperSushi add liquidity test', (
       it('Should convert 2 ETH to DAI Token(s) from MakerDao via SushiSwap', async () => {
 
           const zeroAddress = process.env.ZERO_ADDRESS;
-          const userSlippageTolerance = config.userSlippageTolerance;
+          const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
           const daiToken = new ethers.Contract(daiTokenAddress, abi, provider);
 
           // Please note, the number of dai tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -83,7 +83,7 @@ describe('Deploying the plexus contracts for WrapperSushi add liquidity test', (
       });
 
       it('Should create pool(SUSHI-COMPOUND) with DAI via UniswapV2', async () => {
-          const userSlippageTolerance = config.userSlippageTolerance;
+          const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
           let daiToken = new ethers.Contract(daiTokenAddress, abi, provider);
 
           const initDaiBalance = Number(ethers.utils.formatUnits(await daiToken.balanceOf(owner.address), `ether`));
@@ -124,7 +124,7 @@ describe('Deploying the plexus contracts for WrapperSushi add liquidity test', (
       });
 
       it('Should return DAI from pool when unwrap with token pair via SushiSwap', async () => {
-          const userSlippageTolerance = config.userSlippageTolerance;
+          const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
           let daiToken = new ethers.Contract(daiTokenAddress, abi, provider);
           let lpToken = new ethers.Contract(tokenPairAddress, abi, provider);
           lpToken = await lpToken.connect(owner);

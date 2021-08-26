@@ -23,7 +23,7 @@ describe('Re-deploying the plexus ecosystem for Token Rewards test', () => {
   // Deploy and setup the contracts
   before(async () => {
     const { deployedContracts } = await setupContracts();
-  
+
     tokenRewards = deployedContracts.tokenRewards;
     core = deployedContracts.core;
     plexusCoin = deployedContracts.plexusCoin;
@@ -69,7 +69,7 @@ describe('Re-deploying the plexus ecosystem for Token Rewards test', () => {
     it('Should convert 2 ETH to Farm token from harvest.finance', async () => {
 
       const zeroAddress = process.env.ZERO_ADDRESS;
-      const userSlippageTolerance = config.userSlippageTolerance;
+      const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
       const erc20 = new ethers.Contract(farmTokenAddress, abi, provider);
 
       // Please note, the number of farm tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -112,7 +112,7 @@ describe('Re-deploying the plexus ecosystem for Token Rewards test', () => {
     it('Should convert 2 ETH to DAI Token from MakerDao', async () => {
 
       const zeroAddress = process.env.ZERO_ADDRESS;
-      const userSlippageTolerance = config.userSlippageTolerance;
+      const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
       const erc20 = new ethers.Contract(daiTokenAddress, abi, provider);
 
       // Please note, the number of dai tokens we want to get doesn't matter, so the unit amount is just a placeholder
@@ -155,7 +155,7 @@ describe('Re-deploying the plexus ecosystem for Token Rewards test', () => {
     it('Should convert 2 ETH to Pickle Token', async () => {
 
       const zeroAddress = process.env.ZERO_ADDRESS;
-      const userSlippageTolerance = config.userSlippageTolerance;
+      const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
       const erc20 = new ethers.Contract(pickleTokenAddress, abi, provider);
 
       // Please note, the number of pickle tokens we want to get doesn't matter, so the unit amount is just a placeholder

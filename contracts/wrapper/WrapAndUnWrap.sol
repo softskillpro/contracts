@@ -195,11 +195,11 @@ contract WrapAndUnWrap is IWrapper {
             IWETH(WETH_TOKEN_ADDRESS).deposit{value: msg.value}();
             amount = msg.value;
         } else {
-            
+
             if(!remixing) { // only transfer when not remixing, because when remixing the amount should already be sent to the contract
                 IERC20(params.sourceToken).safeTransferFrom(msg.sender, address(this), amount);
             }
-            
+
         }
 
         if (params.destinationTokens[0] == address(0x0)) {
@@ -287,7 +287,7 @@ contract WrapAndUnWrap is IWrapper {
 
     /**
      * @notice Wrap a source token based on the specified
-     * @param params params of struct WrapParams 
+     * @param params params of struct WrapParams
      * // contains following properties
        // sourceToken Address to the source token contract
        // destinationTokens Array describing the token(s) which the source
@@ -325,7 +325,7 @@ contract WrapAndUnWrap is IWrapper {
         returns (uint256)
     {
         address originalDestinationToken = params.destinationToken;
-      
+
         IERC20 sToken = IERC20(params.lpTokenPairAddress);
         if (params.destinationToken == address(0x0)) {
             params.destinationToken = WETH_TOKEN_ADDRESS;
@@ -380,9 +380,9 @@ contract WrapAndUnWrap is IWrapper {
 
         IERC20 dToken = IERC20(params.destinationToken);
         uint256 destinationTokenBalance = dToken.balanceOf(address(this));
-    
+
         if (remixing) {
-            
+
             emit RemixUnwrap(destinationTokenBalance);
         }
         else { // we only transfer the tokens to the user when not remixing
@@ -411,13 +411,13 @@ contract WrapAndUnWrap is IWrapper {
             }
 
         }
-       
+
         return destinationTokenBalance;
     }
 
     /**
      * @notice Unwrap a source token based to the specified destination token
-     * @param params params of struct UnwrapParams 
+     * @param params params of struct UnwrapParams
         it contains following properties
         // param lpTokenPairAddress address for lp token
         // destinationToken Address of the destination token contract
@@ -436,17 +436,17 @@ contract WrapAndUnWrap is IWrapper {
         returns (uint256)
     {
 
-      
+
         bool remixing = false; //flag indicates whether we're remixing or not
         //address[][] memory _paths = splitPath(paths, destinationToken);
         uint256 destAmount = removeWrap(params, remixing);
         emit UnWrapV2(destAmount);
         return destAmount;
-    
+
     }
 
      /**
-     * @notice Unwrap a source token and wrap it into a different destination token 
+     * @notice Unwrap a source token and wrap it into a different destination token
      * @param params Remix params having following properties
         // lpTokenPairAddress Address for the LP pair to remix
         // unwrapOutputToken Address for the initial output token of remix
@@ -471,7 +471,7 @@ contract WrapAndUnWrap is IWrapper {
         uint lpTokenAmount = 0;
 
         // First of all we unwrap the token
-       
+
         UnwrapParams memory unwrapParams = UnwrapParams({
             lpTokenPairAddress: params.lpTokenPairAddress,
             destinationToken: params.unwrapOutputToken,
@@ -505,18 +505,18 @@ contract WrapAndUnWrap is IWrapper {
             IERC20(remixedLpTokenPairAddress).safeTransfer(msg.sender, lpTokenAmount);
 
             emit RemixWrap(remixedLpTokenPairAddress, lpTokenAmount);
-                                   
+
         } else {
             // then now we create the new LP token
             (address remixedLpTokenPairAddress, uint256 remixedLpTokenAmount) = createWrap(wrapParams, true);
-            
+
             lpTokenAmount = remixedLpTokenAmount;
 
             emit RemixWrap(remixedLpTokenPairAddress, remixedLpTokenAmount);
         }
 
         return lpTokenAmount;
-        
+
     }
 
 
@@ -603,12 +603,11 @@ contract WrapAndUnWrap is IWrapper {
         returns (uint256)
     {
         uint256[] memory assetAmounts = getPriceFromUniswap(paths, amount);
-        
+
 
         // this is the index of the output token we're swapping to based on the paths
         uint outputTokenIndex = assetAmounts.length - 1;
-        require(userSlippageTolerance <= 100, "userSlippageTolerance can not be larger than 100");
-        return SafeMath.div(SafeMath.mul(assetAmounts[outputTokenIndex], (100 - userSlippageTolerance)), 100);
+        return SafeMath.div(SafeMath.mul(assetAmounts[outputTokenIndex], (100 * 10000 - userSlippageTolerance)), 100 * 10000);
     }
 
     /**

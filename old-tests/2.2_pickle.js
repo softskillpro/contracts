@@ -78,7 +78,7 @@ describe('Re-deploying the plexus ecosystem for Pickle test', () => {
     it('Should convert 2 ETH to Pickle Token', async () => {
 
        const zeroAddress = process.env.ZERO_ADDRESS;
-       const userSlippageTolerance = config.userSlippageTolerance;
+       const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
        // Please note, the number of pickle tokens we want to get doesn't matter, so the unit amount is just a placeholder
        const amountPlaceholder = ethers.utils.parseEther(unitAmount)
 

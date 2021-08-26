@@ -54,7 +54,7 @@ describe('Re-deploying the plexus ecosystem for Aave (DAI) test', () => {
 
 
     it('tier2Aave (DAI) contract should have the correct Token and Token Staking Addresses', async () => {
-     
+
         const { status } = await (await tier1Staking.addOrEditTier2ChildsChildStakingContract(tier2Aave.address, tier2ContractName, process.env.AAVE_STAKING_MAINNET_ADDRESS, process.env.DAI_TOKEN_MAINNET_ADDRESS)).wait();
 
         // Check if the txn is successful
@@ -80,7 +80,7 @@ describe('Re-deploying the plexus ecosystem for Aave (DAI) test', () => {
     it('Should convert 2 ETH to DAI Token from MakerDao', async () => {
 
        const zeroAddress = process.env.ZERO_ADDRESS;
-       const userSlippageTolerance = config.userSlippageTolerance;
+       const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
        // Please note, the number of dai tokens we want to get doesn't matter, so the unit amount is just a placeholder
        const amountPlaceholder = ethers.utils.parseEther(unitAmount)
 

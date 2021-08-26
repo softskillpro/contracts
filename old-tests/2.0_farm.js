@@ -25,11 +25,11 @@ describe('Re-deploying the plexus ecosystem for Farm test', () => {
   // Deploy and setup the contracts
   before(async () => {
     const { deployedContracts } = await setupContracts();
-    
+
     tier1Staking = deployedContracts.tier1Staking;
     core = deployedContracts.core;
     tier2Farm = deployedContracts.tier2Farm;
-   
+
     owner = deployedContracts.owner;
     addr1 = deployedContracts.addr1;
 
@@ -80,7 +80,7 @@ describe('Re-deploying the plexus ecosystem for Farm test', () => {
     it('Should convert 2 ETH to Farm token from harvest.finance', async () => {
 
        const zeroAddress = process.env.ZERO_ADDRESS;
-       const userSlippageTolerance = config.userSlippageTolerance;
+       const userSlippageTolerance = config.userSlippageTolerance * config.tolerancePrecision;
 
        // Please note, the number of farm tokens we want to get doesn't matter, so the unit amount is just a placeholder
        const amountPlaceholder = ethers.utils.parseEther(unitAmount)
