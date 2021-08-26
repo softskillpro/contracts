@@ -358,7 +358,7 @@ contract WrapAndUnWrapSushi is IWrapper{
     {
         //address[][] memory _paths = splitPath(params.paths, params.destinationTokens[0]);
         if (params.destinationTokens.length == 1) {
-            uint256 swapAmount = swap(params.sourceToken, params.destinationTokens[0], params.path1, params.amount, params.userSlippageTolerance, params.deadline);
+            uint256 swapAmount = swap(params.sourceToken, params.destinationTokens[0], params.path1, params.amount, params.userSlippageToleranceAmounts[0], params.deadline);
             return (params.destinationTokens[0], swapAmount);
         } else {
             bool remixing = false;
@@ -527,7 +527,7 @@ contract WrapAndUnWrapSushi is IWrapper{
             path1: params.unwrapPath1,
             path2: params.unwrapPath2,
             amount: params.amount,
-            userSlippageToleranceAmounts: params.userSlippageToleranceAmounts,
+            userSlippageToleranceAmounts: params.userUnWrapSlippageToleranceAmounts,
             deadline: params.deadline
         });
         uint256 destinationTokenBalance = removeWrap(unwrapParams, true);
@@ -538,7 +538,7 @@ contract WrapAndUnWrapSushi is IWrapper{
             path1: params.wrapPath1,
             path2: params.wrapPath2,
             amount: params.amount,
-            userSlippageToleranceAmounts: params.userSlippageToleranceAmounts,
+            userSlippageToleranceAmounts: params.userWrapSlippageToleranceAmounts,
             deadline: params.deadline
         });
         if(params.crossDexRemix) {
@@ -576,7 +576,7 @@ contract WrapAndUnWrapSushi is IWrapper{
      * @return amounts1 Array with maximum output token amounts for all token
      * pairs in the swap path
      */
-    function getPriceFromSushiswap(
+    function getAmountsOut(
         address[] memory theAddresses,
         uint256 amount
     )
@@ -615,7 +615,7 @@ contract WrapAndUnWrapSushi is IWrapper{
         view
         returns (uint256)
     {
-        uint256[] memory assetAmounts = getPriceFromSushiswap(
+        uint256[] memory assetAmounts = getAmountsOut(
             theAddresses,
             amount
         );
